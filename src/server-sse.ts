@@ -159,10 +159,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
         const { createSSEServer } = await import('./transports/sse.js'); // Dynamic import ensures clean startup
         const { createChhartMcpServer } = await import('./server-sse.js'); // Import factory
 
-        // We need to instantiate the MCP server first to pass it to the transport factory
-        const mcpServer = createChhartMcpServer();
-
         const port = parseInt(process.env.PORT || '3000', 10);
-        createSSEServer(mcpServer, port);
+        // Pass the factory function, not an instance
+        createSSEServer(createChhartMcpServer, port);
     })();
 }

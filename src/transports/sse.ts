@@ -8,7 +8,7 @@ import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 
 
-export function createSSEServer(mcpServer: Server, port: number = 3000) {
+export function createSSEServer(createMcpServer: () => Server, port: number = 3000) {
     const app = express();
 
     // Map to store active transports by session ID
@@ -53,11 +53,9 @@ export function createSSEServer(mcpServer: Server, port: number = 3000) {
         // We use /messages so it's distinct from the SSE stream
         const transport = new SSEServerTransport('/messages', res);
 
-        // Store transport properly - getting sessionId requires accessing internal property or handling it differently
-        // For SSEServerTransport, the session ID is generated internally or we need to manage it.
-        // The SDK's SSEServerTransport writes the 'endpoint' event with the session ID appended if we provide a base URL.
-        // actually, sdk implementation details: 
-        // new SSEServerTransport(endpoint, res) -> sends `event: endpoint\ndata: {endpoint}?sessionId={uuid}`
+        // Create a new MCP server instance for this connection
+        // This is the correct pattern - each SSE connection gets its own server instance
+        const mcpServer = createMcpServer();
 
         console.log('Connecting transport to MCP server...');
         await mcpServer.connect(transport);
@@ -84,7 +82,12 @@ export function createSSEServer(mcpServer: Server, port: number = 3000) {
 
         // Heartbeat to keep connection alive
         const heartbeatInterval = setInterval(() => {
-            res.write(': keepalive\n\n');
+            try {
+                res.write(': keepalive\n\n');
+            } catch (error) {
+                console.error('Error writing heartbeat:', error);
+                clearInterval(heartbeatInterval);
+            }
         }, 15000); // 15 seconds
 
         // Cleanup on disconnect
@@ -111,6 +114,7 @@ export function createSSEServer(mcpServer: Server, port: number = 3000) {
         const transport = transports.get(sessionId);
 
         if (!transport) {
+            console.error(`Session not found: ${sessionId}. Active sessions:`, Array.from(transports.keys()));
             res.status(404).send(`Session not found: ${sessionId}`);
             return;
         }
