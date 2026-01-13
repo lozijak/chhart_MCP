@@ -52,8 +52,11 @@ export function createHTTPServer(port: number = 3000) {
             console.log(`Session created: ${sessionId}`);
         }
 
+        let keepAliveInterval: NodeJS.Timeout;
+
         req.on('close', () => {
             console.log(`Session closed: ${sessionId}`);
+            clearInterval(keepAliveInterval);
             if (sessionId) {
                 transports.delete(sessionId);
             }
@@ -61,6 +64,11 @@ export function createHTTPServer(port: number = 3000) {
         });
 
         await server.connect(transport);
+
+        // Keep-alive heartbeat every 15 seconds to prevent timeout
+        keepAliveInterval = setInterval(() => {
+            res.write(': keepalive\n\n');
+        }, 15000);
     });
 
     // Message Endpoint - Receives JSON-RPC messages
