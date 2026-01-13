@@ -36,15 +36,15 @@ export function createHTTPServer(port: number = 3000) {
         });
     });
 
-    // Store active transports
-    const transports = new Map<string, SSEServerTransport>();
+    // Store active transports with readiness tracking
+    const transports = new Map<string, { transport: SSEServerTransport; ready: boolean }>();
 
     // SSE Endpoint - Starts a new session
     app.get('/sse', async (req: Request, res: Response) => {
         console.log('New SSE connection initiated');
 
-        // Ensure valid SSE headers
-        res.setHeader('Content-Type', 'text/event-stream');
+        // Ensure valid SSE headers (Fix 4: exact headers required by Antigravity)
+        res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
         res.setHeader('Cache-Control', 'no-cache');
         res.setHeader('Connection', 'keep-alive');
         res.setHeader('X-Accel-Buffering', 'no');
@@ -52,10 +52,10 @@ export function createHTTPServer(port: number = 3000) {
         const transport = new SSEServerTransport('/message', res);
         const server = createChhartMcpServer();
 
-        // Register session immediately to handle race conditions
+        // Register session immediately to handle race conditions (Fix 3: track readiness)
         const sessionId = transport.sessionId;
         if (sessionId) {
-            transports.set(sessionId, transport);
+            transports.set(sessionId, { transport, ready: false });
             console.log(`Session created: ${sessionId}`);
         }
 
@@ -72,16 +72,26 @@ export function createHTTPServer(port: number = 3000) {
 
         await server.connect(transport);
 
-        // Keep-alive heartbeat every 10 seconds to prevent timeout
-        // Wrapped in try/catch to prevent server crash on write failure
+        // Mark session as ready after successful connection (Fix 3)
+        if (sessionId) {
+            const session = transports.get(sessionId);
+            if (session) {
+                session.ready = true;
+                console.log(`Session ready: ${sessionId}`);
+            }
+        }
+
+        // Keep-alive heartbeat every 15 seconds (Fix 1: send real events, not comments)
+        // Antigravity ignores comment-only keepalives and closes the stream
         keepAliveInterval = setInterval(() => {
             try {
-                res.write(': keepalive\n\n');
+                res.write('event: ping\n');
+                res.write('data: {}\n\n');
             } catch (error) {
                 console.error(`Heartbeat failed for ${sessionId}:`, error);
                 clearInterval(keepAliveInterval);
             }
-        }, 10000);
+        }, 15000);
     });
 
     // Message Endpoint - Receives JSON-RPC messages
@@ -93,13 +103,19 @@ export function createHTTPServer(port: number = 3000) {
             return;
         }
 
-        const transport = transports.get(sessionId);
-        if (!transport) {
+        const session = transports.get(sessionId);
+        if (!session) {
             res.status(404).send('Session not found');
             return;
         }
 
-        await transport.handlePostMessage(req, res, req.body);
+        // Fix 3: Delay accepting /message until session is ready
+        if (!session.ready) {
+            res.status(409).json({ error: 'SSE session not ready yet' });
+            return;
+        }
+
+        await session.transport.handlePostMessage(req, res, req.body);
     });
 
     // Start server
