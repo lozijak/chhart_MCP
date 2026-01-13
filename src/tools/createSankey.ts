@@ -1,13 +1,33 @@
 import { z } from 'zod';
 import { generateSankeyUrl } from '../utils/urlEncoder.js';
 
+/**
+ * Zod schema for validating createSankey tool input.
+ * Ensures content is provided and title is optional.
+ */
 export const createSankeySchema = z.object({
     content: z.string().describe('Sankey diagram content in Chhart DSL format (indented outline with [value=N] attributes)'),
     title: z.string().optional().describe('Optional title for the Sankey diagram')
 });
 
+/**
+ * Input type for the createSankey tool.
+ */
 export type CreateSankeyInput = z.infer<typeof createSankeySchema>;
 
+/**
+ * Creates a Sankey diagram on chhart.app and returns a shareable URL.
+ * 
+ * @param input - The Sankey diagram content and optional title
+ * @returns MCP tool response with the generated URL and preview
+ * @example
+ * ```typescript
+ * const result = await createSankey({
+ *   content: "Revenue [value=100]\n  Profit [value=60]",
+ *   title: "Budget Flow"
+ * });
+ * ```
+ */
 export async function createSankey(input: CreateSankeyInput) {
     const { content, title } = input;
 

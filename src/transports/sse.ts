@@ -8,6 +8,14 @@ import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 
 
+/**
+ * Creates an Express server with SSE transport for remote MCP access.
+ * Enables the MCP server to be accessed over HTTP with Server-Sent Events.
+ * 
+ * @param createMcpServer - Factory function that creates a new MCP server instance
+ * @param port - Port number to listen on (default: 3000)
+ * @returns The Express application instance
+ */
 export function createSSEServer(createMcpServer: () => Server, port: number = 3000) {
     const app = express();
 
@@ -41,7 +49,7 @@ export function createSSEServer(createMcpServer: () => Server, port: number = 30
 
     // SSE endpoint for MCP communication (changed to /mcp as requested)
     app.get('/mcp', async (req: Request, res: Response) => {
-        console.log('New SSE connection initiated');
+        console.error('New SSE connection initiated');
 
         // Set headers for SSE
         // We use setHeader because the SSEServerTransport calls writeHead internally.
@@ -57,7 +65,7 @@ export function createSSEServer(createMcpServer: () => Server, port: number = 30
         // This is the correct pattern - each SSE connection gets its own server instance
         const mcpServer = createMcpServer();
 
-        console.log('Connecting transport to MCP server...');
+        console.error('Connecting transport to MCP server...');
         await mcpServer.connect(transport);
 
         // We need to capture the sessionId to store the transport for POST requests.
@@ -77,7 +85,7 @@ export function createSSEServer(createMcpServer: () => Server, port: number = 30
         const sessionId = transport.sessionId;
         if (sessionId) {
             transports.set(sessionId, transport);
-            console.log(`Transport connected with Session ID: ${sessionId}`);
+            console.error(`Transport connected with Session ID: ${sessionId}`);
         }
 
         // Heartbeat to keep connection alive
@@ -92,7 +100,7 @@ export function createSSEServer(createMcpServer: () => Server, port: number = 30
 
         // Cleanup on disconnect
         req.on('close', () => {
-            console.log(`SSE connection closed for session: ${sessionId}`);
+            console.error(`SSE connection closed for session: ${sessionId}`);
             clearInterval(heartbeatInterval);
             if (sessionId) {
                 transports.delete(sessionId);

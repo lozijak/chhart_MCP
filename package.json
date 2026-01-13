@@ -22,8 +22,20 @@
     "sankey",
     "diagram"
   ],
-  "author": "",
+  "author": "Chhart.app",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chhart/chhart-mcp-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/chhart/chhart-mcp-server/issues"
+  },
+  "homepage": "https://github.com/chhart/chhart-mcp-server#readme",
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=9.0.0"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.4",
     "express": "^4.18.2",

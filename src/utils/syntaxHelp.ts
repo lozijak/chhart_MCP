@@ -1,7 +1,12 @@
 /**
  * Chhart Syntax Documentation
+ * Provides comprehensive documentation and examples for Chhart's DSL syntax
  */
 
+/**
+ * Documentation for Chhart flowchart syntax.
+ * Includes basic structure, attributes, styling, and examples.
+ */
 export const FLOWCHART_SYNTAX = `
 # Chhart Flowchart Syntax
 
@@ -58,6 +63,10 @@ Container {
 - Add attributes for visual emphasis
 `;
 
+/**
+ * Documentation for Chhart Sankey diagram syntax.
+ * Includes flow format, value notation, and multi-level flow examples.
+ */
 export const SANKEY_SYNTAX = `
 # Chhart Sankey Diagram Syntax
 
@@ -99,8 +108,14 @@ Residential
 - Total input should equal total output for balanced diagrams
 `;
 
+/**
+ * Combined documentation for both flowchart and Sankey diagram syntax.
+ */
 export const COMBINED_SYNTAX = FLOWCHART_SYNTAX + '\n\n' + SANKEY_SYNTAX;
 
+/**
+ * Example flowcharts demonstrating common patterns and use cases.
+ */
 export const FLOWCHART_EXAMPLES = [
   {
     title: 'Simple Decision Flow',
@@ -129,6 +144,9 @@ export const FLOWCHART_EXAMPLES = [
   }
 ];
 
+/**
+ * Example Sankey diagrams demonstrating flow visualization patterns.
+ */
 export const SANKEY_EXAMPLES = [
   {
     title: 'Budget Allocation',

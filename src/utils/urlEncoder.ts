@@ -4,7 +4,16 @@
  */
 
 /**
- * Encodes chart content into a URL-safe base64 string
+ * Encodes chart content into a URL-safe base64 string.
+ * Converts the content to base64 and replaces characters that are not URL-safe.
+ * 
+ * @param content - The chart content to encode (Chhart DSL format)
+ * @returns A URL-safe base64 encoded string
+ * @example
+ * ```typescript
+ * const encoded = encodeChartData("Start\n  End");
+ * // Returns: "U3RhcnQKICBFbmQ"
+ * ```
  */
 export function encodeChartData(content: string): string {
     // Convert to base64 and make URL-safe
@@ -16,7 +25,17 @@ export function encodeChartData(content: string): string {
 }
 
 /**
- * Generates a shareable URL for a flowchart
+ * Generates a shareable URL for a flowchart on chhart.app.
+ * The URL includes the encoded flowchart content and optional title in the hash fragment.
+ * 
+ * @param content - The flowchart content in Chhart DSL format
+ * @param title - Optional title for the flowchart
+ * @returns A complete URL to view the flowchart on chhart.app
+ * @example
+ * ```typescript
+ * const url = generateFlowchartUrl("Start\n  End", "My Flowchart");
+ * // Returns: "https://chhart.app/#flowchart=U3RhcnQKICBFbmQ&title=My%20Flowchart"
+ * ```
  */
 export function generateFlowchartUrl(content: string, title?: string): string {
     const encoded = encodeChartData(content);
@@ -34,7 +53,17 @@ export function generateFlowchartUrl(content: string, title?: string): string {
 }
 
 /**
- * Generates a shareable URL for a Sankey diagram
+ * Generates a shareable URL for a Sankey diagram on chhart.app.
+ * The URL includes the encoded Sankey diagram content and optional title in the hash fragment.
+ * 
+ * @param content - The Sankey diagram content in Chhart DSL format
+ * @param title - Optional title for the Sankey diagram
+ * @returns A complete URL to view the Sankey diagram on chhart.app
+ * @example
+ * ```typescript
+ * const url = generateSankeyUrl("Revenue [value=100]\n  Profit [value=60]", "Budget");
+ * // Returns: "https://chhart.app/#sankey=...&title=Budget"
+ * ```
  */
 export function generateSankeyUrl(content: string, title?: string): string {
     const encoded = encodeChartData(content);
@@ -51,7 +80,16 @@ export function generateSankeyUrl(content: string, title?: string): string {
 }
 
 /**
- * Decodes a URL-safe base64 string back to original content
+ * Decodes a URL-safe base64 string back to original content.
+ * Reverses the URL-safe encoding and converts base64 back to UTF-8 text.
+ * 
+ * @param encoded - The URL-safe base64 encoded string
+ * @returns The original decoded content
+ * @example
+ * ```typescript
+ * const decoded = decodeChartData("U3RhcnQKICBFbmQ");
+ * // Returns: "Start\n  End"
+ * ```
  */
 export function decodeChartData(encoded: string): string {
     // Restore standard base64 format

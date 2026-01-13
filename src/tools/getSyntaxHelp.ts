@@ -12,14 +12,31 @@ import {
     SANKEY_EXAMPLES
 } from '../utils/syntaxHelp.js';
 
+/**
+ * Zod schema for validating getSyntaxHelp tool input.
+ * Allows specifying which type of syntax documentation to retrieve.
+ */
 export const getSyntaxHelpSchema = z.object({
     type: z.enum(['flowchart', 'sankey', 'all'])
         .default('all')
         .describe('Which syntax documentation to retrieve')
 });
 
+/**
+ * Input type for the getSyntaxHelp tool.
+ */
 export type GetSyntaxHelpInput = z.infer<typeof getSyntaxHelpSchema>;
 
+/**
+ * Returns comprehensive documentation and examples for Chhart's DSL syntax.
+ * 
+ * @param input - Specifies which syntax documentation to retrieve (flowchart, sankey, or all)
+ * @returns MCP tool response with syntax documentation and examples
+ * @example
+ * ```typescript
+ * const result = await getSyntaxHelp({ type: 'flowchart' });
+ * ```
+ */
 export async function getSyntaxHelp(input: GetSyntaxHelpInput) {
     const { type } = input;
 

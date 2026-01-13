@@ -6,13 +6,33 @@
 import { z } from 'zod';
 import { generateFlowchartUrl } from '../utils/urlEncoder.js';
 
+/**
+ * Zod schema for validating createFlowchart tool input.
+ * Ensures content is provided and title is optional.
+ */
 export const createFlowchartSchema = z.object({
     content: z.string().describe('Flowchart content in Chhart DSL format (indented outline)'),
     title: z.string().optional().describe('Optional title for the flowchart')
 });
 
+/**
+ * Input type for the createFlowchart tool.
+ */
 export type CreateFlowchartInput = z.infer<typeof createFlowchartSchema>;
 
+/**
+ * Creates a flowchart on chhart.app and returns a shareable URL.
+ * 
+ * @param input - The flowchart content and optional title
+ * @returns MCP tool response with the generated URL and preview
+ * @example
+ * ```typescript
+ * const result = await createFlowchart({
+ *   content: "Start\n  End",
+ *   title: "Simple Flow"
+ * });
+ * ```
+ */
 export async function createFlowchart(input: CreateFlowchartInput) {
     const { content, title } = input;
 
