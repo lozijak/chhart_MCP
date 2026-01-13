@@ -15,6 +15,7 @@ export function createHTTPServer(port: number = 3000) {
         res.header('Access-Control-Allow-Origin', '*');
         res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
         res.header('Access-Control-Allow-Headers', 'Content-Type, mcp-session-id');
+        res.header('X-Accel-Buffering', 'no'); // Disable buffering for SSE
 
         if (req.method === 'OPTIONS') {
             res.sendStatus(200);
@@ -42,6 +43,12 @@ export function createHTTPServer(port: number = 3000) {
     app.get('/sse', async (req: Request, res: Response) => {
         console.log('New SSE connection initiated');
 
+        // Ensure valid SSE headers
+        res.setHeader('Content-Type', 'text/event-stream');
+        res.setHeader('Cache-Control', 'no-cache');
+        res.setHeader('Connection', 'keep-alive');
+        res.setHeader('X-Accel-Buffering', 'no');
+
         const transport = new SSEServerTransport('/message', res);
         const server = createChhartMcpServer();
 
@@ -65,10 +72,16 @@ export function createHTTPServer(port: number = 3000) {
 
         await server.connect(transport);
 
-        // Keep-alive heartbeat every 15 seconds to prevent timeout
+        // Keep-alive heartbeat every 10 seconds to prevent timeout
+        // Wrapped in try/catch to prevent server crash on write failure
         keepAliveInterval = setInterval(() => {
-            res.write(': keepalive\n\n');
-        }, 15000);
+            try {
+                res.write(': keepalive\n\n');
+            } catch (error) {
+                console.error(`Heartbeat failed for ${sessionId}:`, error);
+                clearInterval(keepAliveInterval);
+            }
+        }, 10000);
     });
 
     // Message Endpoint - Receives JSON-RPC messages
@@ -90,11 +103,15 @@ export function createHTTPServer(port: number = 3000) {
     });
 
     // Start server
-    app.listen(port, () => {
+    const server = app.listen(port, () => {
         console.error(`Chhart MCP Server (SSE) listening on port ${port}`);
         console.error(`Health check: http://localhost:${port}/health`);
         console.error(`SSE endpoint: http://localhost:${port}/sse`);
     });
+
+    // Increase timeouts to prevent premature connection closure
+    server.headersTimeout = 65000;
+    server.keepAliveTimeout = 61000;
 
     return app;
 }
