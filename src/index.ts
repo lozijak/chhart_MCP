@@ -71,34 +71,16 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
                 inputSchema: {
                     type: 'object',
                     properties: {
-                        flows: {
-                            type: 'array',
-                            description: 'Array of flows between nodes',
-                            items: {
-                                type: 'object',
-                                properties: {
-                                    source: {
-                                        type: 'string',
-                                        description: 'Source node name'
-                                    },
-                                    target: {
-                                        type: 'string',
-                                        description: 'Target node name'
-                                    },
-                                    value: {
-                                        type: 'number',
-                                        description: 'Flow value/weight (must be positive)'
-                                    }
-                                },
-                                required: ['source', 'target', 'value']
-                            }
+                        content: {
+                            type: 'string',
+                            description: 'Sankey diagram content in Chhart DSL format (indented outline with [value=N] attributes)'
                         },
                         title: {
                             type: 'string',
                             description: 'Optional title for the Sankey diagram'
                         }
                     },
-                    required: ['flows']
+                    required: ['content']
                 }
             },
             {
