@@ -29,7 +29,7 @@ import {
     type GetSyntaxHelpInput
 } from './tools/getSyntaxHelp.js';
 
-import { createSSEServer } from './transports/sse.js';
+import { createHTTPServer } from './transports/http.js';
 
 // Create MCP server instance
 const server = new Server(
@@ -167,6 +167,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
 });
 
-// Start SSE server
+// Start Streamable HTTP server
 const port = parseInt(process.env.PORT || '3000', 10);
-createSSEServer(server, port);
+createHTTPServer(server, port);
