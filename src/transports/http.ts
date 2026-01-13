@@ -23,7 +23,7 @@ export function createHTTPServer(port: number = 3000) {
         next();
     });
 
-    app.use(express.json());
+    app.use(express.json({ limit: '10mb' }));
 
     // Health check endpoint
     app.get('/health', (req: Request, res: Response) => {
@@ -45,27 +45,22 @@ export function createHTTPServer(port: number = 3000) {
         const transport = new SSEServerTransport('/message', res);
         const server = createChhartMcpServer();
 
-        // Check internal API to get session ID if not public, 
-        // usually transport.sessionId is available after construction or start
-        // In the specific SDK version, we might need to rely on the transport sending the ID.
-        // But for routing POST messages, we need to know the ID server-side.
-        // SSEServerTransport usually generates one.
-
-        await server.connect(transport);
-
-        // Access sessionId - SDK implementation dependent, but usually public
+        // Register session immediately to handle race conditions
         const sessionId = transport.sessionId;
-
         if (sessionId) {
             transports.set(sessionId, transport);
             console.log(`Session created: ${sessionId}`);
-
-            req.on('close', () => {
-                console.log(`Session closed: ${sessionId}`);
-                transports.delete(sessionId);
-                server.close();
-            });
         }
+
+        req.on('close', () => {
+            console.log(`Session closed: ${sessionId}`);
+            if (sessionId) {
+                transports.delete(sessionId);
+            }
+            server.close();
+        });
+
+        await server.connect(transport);
     });
 
     // Message Endpoint - Receives JSON-RPC messages
