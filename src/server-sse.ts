@@ -29,7 +29,7 @@ import {
     type GetSyntaxHelpInput
 } from './tools/getSyntaxHelp.js';
 
-import { createHTTPServer } from './transports/http.js';
+import { createSSEServer } from './transports/sse.js';
 
 // Create MCP server instance factory
 export function createChhartMcpServer() {
@@ -156,8 +156,13 @@ export function createChhartMcpServer() {
 // Start Server if run directly
 if (import.meta.url === `file://${process.argv[1]}`) {
     (async () => {
-        const { createHTTPServer } = await import('./transports/http.js');
+        const { createSSEServer } = await import('./transports/sse.js'); // Dynamic import ensures clean startup
+        const { createChhartMcpServer } = await import('./server-sse.js'); // Import factory
+
+        // We need to instantiate the MCP server first to pass it to the transport factory
+        const mcpServer = createChhartMcpServer();
+
         const port = parseInt(process.env.PORT || '3000', 10);
-        createHTTPServer(port);
+        createSSEServer(mcpServer, port);
     })();
 }
