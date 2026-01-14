@@ -14,7 +14,7 @@ An MCP (Model Context Protocol) server that enables AI assistants like ChatGPT, 
 - [Usage](#usage)
   - [Quick Start (Public Server)](#quick-start-public-server)
   - [Local Mode (stdio)](#local-mode-stdio)
-  - [Remote Mode (SSE)](#remote-mode-sse)
+  - [Remote Mode (StreamableHTTP)](#remote-mode-streamablehttp)
 - [Available Tools](#available-tools)
 - [Example Conversations](#example-conversations)
 - [Development](#development)
@@ -32,8 +32,9 @@ An MCP (Model Context Protocol) server that enables AI assistants like ChatGPT, 
 - 📚 **Syntax Help** - Get comprehensive documentation and examples
 - 🔗 **Shareable URLs** - All diagrams come with shareable chhart.app links
 - 🚀 **Easy Integration** - Works with any MCP-compatible AI assistant
-- 🌐 **Dual Mode** - Run locally (stdio) or remotely (SSE over HTTP)
+- 🌐 **Dual Mode** - Run locally (stdio) or remotely (StreamableHTTP)
 - ☁️ **Cloud Ready** - Deploy to Railway, Vercel, or any Node.js hosting
+- 🔒 **Reliable** - Modern StreamableHTTP transport for stable connections
 
 ## Prerequisites
 
@@ -108,14 +109,14 @@ For use with Claude Desktop, Cursor, or other local MCP clients:
 
 3. **Restart your MCP client**
 
-### Remote Mode (SSE)
+### Remote Mode (StreamableHTTP)
 
-For deployment to Railway, Vercel, or other cloud platforms:
+For deployment to Railway, Vercel, or other cloud platforms, we use the modern **StreamableHTTP transport** for reliable, stateless communication.
 
-1. **Build and start the SSE server:**
+1. **Build and start the StreamableHTTP server:**
    ```bash
    npm run build
-   npm run start:sse
+   npm run start:streamable
    ```
 
    The server will start on port 3000 (or the port specified in `PORT` environment variable).
@@ -134,6 +135,24 @@ For deployment to Railway, Vercel, or other cloud platforms:
 3. **Deploy to Railway:**
    
    See the [Railway Deployment Guide](docs/RAILWAY_DEPLOYMENT_GUIDE.md) for detailed instructions.
+
+#### Why StreamableHTTP?
+
+We migrated from SSE to StreamableHTTP transport for better reliability:
+
+| Feature | SSE Transport | StreamableHTTP Transport |
+|---------|---------------|-------------------------|
+| Connection Type | Long-lived SSE stream | Stateless HTTP requests |
+| Stability | Prone to timeouts | ✅ Robust and reliable |
+| Cloud Compatibility | Limited | ✅ Excellent |
+| Session Management | Required | Optional (stateless) |
+
+#### Legacy SSE Mode
+
+The SSE transport is still available but deprecated:
+```bash
+npm run start:sse  # Not recommended for production
+```
 
 ## Available Tools
 
@@ -201,7 +220,10 @@ npm run watch
 # Run locally (stdio mode)
 npm start
 
-# Run SSE server
+# Run StreamableHTTP server (recommended for remote access)
+npm run start:streamable
+
+# Run SSE server (legacy, deprecated)
 npm run start:sse
 ```
 
@@ -210,13 +232,16 @@ npm run start:sse
 ```
 chhart_MCP/
 ├── src/
-│   ├── index.ts           # Main entry point (stdio mode)
-│   ├── server-sse.ts      # SSE server entry point
-│   ├── tools/             # MCP tool implementations
-│   ├── utils/             # Utility functions
-│   └── transports/        # Transport implementations
-├── dist/                  # Compiled JavaScript (generated)
-└── docs/                  # Documentation files
+│   ├── index.ts              # Main entry point (stdio mode)
+│   ├── server-streamable.ts  # StreamableHTTP server (recommended)
+│   ├── server-sse.ts         # SSE server (legacy)
+│   ├── tools/                # MCP tool implementations
+│   ├── utils/                # Utility functions
+│   └── transports/           # Transport implementations
+│       ├── streamable.ts     # StreamableHTTP transport
+│       └── sse.ts            # SSE transport (legacy)
+├── dist/                     # Compiled JavaScript (generated)
+└── docs/                     # Documentation files
 ```
 
 ## How It Works
@@ -237,11 +262,18 @@ The MCP server generates shareable URLs by encoding chart data into the URL hash
 - Verify the path in your MCP client configuration is absolute
 - Check that Node.js 20+ is installed: `node --version`
 
-### SSE Connection Issues
+### Connection Issues
 
+**"connection closed: EOF" or similar errors:**
+- If using remote mode, ensure you're using StreamableHTTP transport (`npm run start:streamable`)
+- The legacy SSE transport is deprecated and may have stability issues
 - Verify the server is running: check the health endpoint at `http://localhost:3000/health`
 - Check firewall settings if deploying remotely
 - Ensure CORS is properly configured for your domain
+
+**Client configuration:**
+- Clients must accept both `application/json` and `text/event-stream` content types
+- Ensure the URL points to the `/mcp` endpoint
 
 ### Charts Not Loading
 
