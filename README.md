@@ -3,6 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/chhart-mcp-server.svg)](https://www.npmjs.com/package/chhart-mcp-server)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](https://nodejs.org/)
+[![MCP Badge](https://lobehub.com/badge/mcp/chhart-chhart-mcp-server)](https://lobehub.com/mcp/chhart-chhart-mcp-server)
 
 An MCP (Model Context Protocol) server that enables AI assistants like ChatGPT, Claude, and others to programmatically create flowcharts and Sankey diagrams on [chhart.app](https://chhart.app).
 
