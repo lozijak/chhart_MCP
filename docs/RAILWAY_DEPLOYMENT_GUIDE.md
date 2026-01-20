@@ -8,7 +8,7 @@ Step-by-step guide to deploy the Chhart MCP server to Railway for remote access.
 
 - Railway account (sign up at https://railway.app)
 - Railway CLI installed (or use web interface)
-- GitHub repository with the code (already done: https://github.com/lozijak/chhart_MCP)
+- GitHub repository with the code (already done: https://github.com/alwank/chhart_MCP)
 
 ---
 
@@ -24,6 +24,7 @@ Step-by-step guide to deploy the Chhart MCP server to Railway for remote access.
    - Select "Deploy from GitHub repo"
    - Choose `lozijak/chhart_MCP`
    - Railway will auto-detect the Dockerfile
+   - Ensure the start command runs StreamableHTTP (`node dist/server-streamable.js`) as in `railway.json`
 
 3. **Configure Environment Variables**
    - Click on your deployed service
@@ -84,8 +85,9 @@ Expected response:
 {
   "status": "ok",
   "service": "chhart-mcp-server",
-  "version": "1.0.0",
-  "timestamp": "2026-01-13T08:16:35.000Z"
+  "version": "1.0.1",
+  "transport": "streamable-http",
+  "timestamp": "2026-01-20T08:16:35.000Z"
 }
 ```
 
@@ -116,7 +118,7 @@ Update `claude_desktop_config.json`:
 
 ### For ChatGPT or Other Clients
 
-Provide the SSE endpoint URL:
+Provide the StreamableHTTP endpoint URL:
 ```
 https://your-app.railway.app/mcp
 ```

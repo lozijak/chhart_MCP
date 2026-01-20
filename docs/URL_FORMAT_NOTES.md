@@ -1,4 +1,4 @@
-# URL Format Investigation
+# URL Format Notes
 
 ## Current Status
 
@@ -17,42 +17,17 @@ The generated DSL is **100% valid** and renders perfectly when manually entered 
 - Indentation creates proper connections
 - Visual output matches expectations
 
-### ⚠️ URL Hash Parsing
-The current production version of chhart.app (as of 2026-01-13) does **not yet parse** the URL hash parameters `#flowchart=` or `#sankey=`.
+### ✅ URL Hash Parsing
+The production version of chhart.app **parses** the URL hash parameters `#flowchart=` and `#sankey=` as of **2026-01-20**.
 
 When users navigate to a URL like:
 ```
 https://chhart.app/#flowchart=U3RhcnQKICBEZWNpc2lvbj8...
 ```
 
-The page loads but shows the default welcome chart instead of parsing the hash.
+The app loads the encoded diagram automatically.
 
-## Recommended Solutions
+## Notes
 
-### Option 1: Update chhart.app (Recommended)
-Add URL hash parsing to the production chhart.app to match the MCP's URL format. This would involve:
-
-1. Adding a hash change listener in the app
-2. Parsing `#flowchart=` and `#sankey=` parameters
-3. Decoding base64 content
-4. Loading the decoded content into the editor
-
-Example implementation location: `src/hooks/useUrlState.ts` or similar
-
-### Option 2: Manual Copy-Paste (Current Workaround)
-Users can:
-1. Get the shareable URL from the MCP
-2. Decode the base64 content (MCP can provide this)
-3. Manually paste into chhart.app editor
-
-### Option 3: API Endpoint
-Create a backend API that:
-1. Receives chart data
-2. Stores it with a short ID
-3. Returns URL like `https://chhart.app/view/<id>`
-
-## Next Steps
-
-Since you own chhart.app, the recommended approach is **Option 1**: Update the production app to parse URL hash parameters. This would make the MCP fully functional with zero manual intervention.
-
-The MCP is ready to use - it just needs the corresponding URL parsing feature in the web app.
+- Titles are read from the optional `&title=` parameter.
+- Large diagrams may still hit browser URL length limits.

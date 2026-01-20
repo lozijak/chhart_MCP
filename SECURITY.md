@@ -43,13 +43,16 @@ When using Chhart MCP Server:
 - Only install the MCP server from trusted sources
 - Review the source code before running if concerned
 
-### For Remote Deployments (SSE mode)
+### For Remote Deployments (StreamableHTTP mode)
 - Use HTTPS in production environments
 - Implement rate limiting to prevent abuse
 - Monitor server logs for suspicious activity
 - Keep dependencies updated regularly
 - Use environment variables for sensitive configuration
 - Implement proper authentication if exposing publicly
+
+### Legacy SSE Mode
+- SSE is still available but deprecated; only use it if your client requires it
 
 ### General Recommendations
 - Regularly update to the latest version
@@ -65,11 +68,11 @@ When using Chhart MCP Server:
 - This is a limitation, not a vulnerability
 
 ### CORS Configuration
-- The SSE server enables CORS with `Access-Control-Allow-Origin: *`
+- The HTTP servers enable CORS with `Access-Control-Allow-Origin: *`
 - This is intentional for MCP client compatibility
 - If deploying publicly, consider restricting CORS origins
 
-### Session Management
+### Session Management (SSE Only)
 - SSE connections use session IDs for routing
 - Sessions are stored in-memory and cleared on disconnect
 - No persistent session storage is implemented

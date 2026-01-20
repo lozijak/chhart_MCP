@@ -39,9 +39,9 @@ Add to `.cursor/mcp_config.json`:
 
 ---
 
-## Remote SSE Configuration
+## Remote StreamableHTTP Configuration (Recommended)
 
-For remote access via SSE (after deploying to Railway):
+For remote access via StreamableHTTP (recommended for cloud deployments):
 
 ```json
 {
@@ -55,9 +55,25 @@ For remote access via SSE (after deploying to Railway):
 
 ---
 
-## Environment Variables (SSE Mode)
+## Legacy SSE Configuration
 
-When running in SSE mode, you can configure:
+The SSE transport is still available but deprecated:
+
+```json
+{
+  "mcpServers": {
+    "chhart": {
+      "url": "https://your-app.railway.app/mcp"
+    }
+  }
+}
+```
+
+---
+
+## Environment Variables (Remote Modes)
+
+When running in remote mode, you can configure:
 
 ```bash
 # Port to listen on (default: 3000)
@@ -93,6 +109,6 @@ After adding the configuration:
 - Ensure the config JSON is valid (no trailing commas)
 
 ### Generated URLs not working
-- The DSL is correct, but chhart.app needs URL hash parsing
-- As a workaround, copy the DSL content and paste into chhart.app
-- See URL_FORMAT_NOTES.md for integration details
+- Ensure the URL is complete and not truncated
+- Confirm chhart.app hash parsing is enabled (it is in production as of 2026-01-20)
+- See URL_FORMAT_NOTES.md for details

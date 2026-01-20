@@ -42,7 +42,7 @@ export function createSSEServer(createMcpServer: () => Server, port: number = 30
         res.json({
             status: 'ok',
             service: 'chhart-mcp-server',
-            version: '1.0.0',
+            version: '1.0.1',
             timestamp: new Date().toISOString()
         });
     });

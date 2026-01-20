@@ -46,8 +46,8 @@ Feature requests are welcome! Please create an issue using the feature request t
 
 ```bash
 # Clone your fork
-git clone https://github.com/YOUR_USERNAME/chhart-mcp-server.git
-cd chhart-mcp-server
+git clone https://github.com/YOUR_USERNAME/chhart_MCP.git
+cd chhart_MCP
 
 # Install dependencies
 npm install
@@ -58,7 +58,10 @@ npm run build
 # Test locally (stdio mode)
 node dist/index.js
 
-# Test SSE mode
+# Test StreamableHTTP mode (recommended)
+npm run start:streamable
+
+# Test SSE mode (legacy)
 npm run start:sse
 ```
 
@@ -68,7 +71,8 @@ npm run start:sse
 chhart_MCP/
 ├── src/
 │   ├── index.ts           # Main entry point (stdio mode)
-│   ├── server-sse.ts      # SSE server entry point
+│   ├── server-streamable.ts  # StreamableHTTP server entry point
+│   ├── server-sse.ts         # SSE server entry point (legacy)
 │   ├── tools/             # MCP tool implementations
 │   │   ├── createFlowchart.ts
 │   │   ├── createSankey.ts
@@ -77,6 +81,7 @@ chhart_MCP/
 │   │   ├── urlEncoder.ts
 │   │   └── syntaxHelp.ts
 │   └── transports/        # Transport implementations
+│       ├── streamable.ts
 │       └── sse.ts
 ├── dist/                  # Compiled JavaScript (generated)
 └── docs/                  # Documentation files
@@ -126,7 +131,8 @@ Before submitting a PR:
 
 1. **Build the project**: `npm run build`
 2. **Test stdio mode**: Verify the server works with a local MCP client
-3. **Test SSE mode**: Start the server and test with HTTP requests
+3. **Test StreamableHTTP mode**: Start the server and test with HTTP requests
+4. **Test SSE mode (legacy)**: Start the SSE server and test as needed
 4. **Check for TypeScript errors**: `npx tsc --noEmit`
 
 ## Commit Messages

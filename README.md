@@ -61,7 +61,7 @@ npx chhart-mcp
 ```bash
 # Clone the repository
 git clone https://github.com/alwank/chhart_MCP.git
-cd chhart-mcp
+cd chhart_MCP
 
 # Install dependencies
 npm install
@@ -278,7 +278,8 @@ The MCP server generates shareable URLs by encoding chart data into the URL hash
 - Ensure CORS is properly configured for your domain
 
 **Client configuration:**
-- Clients must accept both `application/json` and `text/event-stream` content types
+- StreamableHTTP clients use `application/json` requests to `/mcp`
+- Legacy SSE clients require `text/event-stream` for the `/mcp` stream and JSON for `/messages`
 - Ensure the URL points to the `/mcp` endpoint
 
 ### Charts Not Loading
