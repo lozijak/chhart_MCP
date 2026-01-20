@@ -1,6 +1,6 @@
 {
   "name": "chhart-mcp",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "MCP server for creating flowcharts and Sankey diagrams on chhart.app",
   "type": "module",
   "main": "dist/index.js",

@@ -85,7 +85,7 @@ Expected response:
 {
   "status": "ok",
   "service": "chhart-mcp-server",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "transport": "streamable-http",
   "timestamp": "2026-01-20T08:16:35.000Z"
 }

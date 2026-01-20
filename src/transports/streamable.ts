@@ -38,7 +38,7 @@ export function createStreamableServer(createMcpServer: () => Server, port: numb
         res.json({
             status: 'ok',
             service: 'chhart-mcp-server',
-            version: '1.0.1',
+            version: '1.0.2',
             transport: 'streamable-http',
             timestamp: new Date().toISOString()
         });

@@ -36,7 +36,7 @@ export function createChhartMcpServer() {
     const server = new Server(
         {
             name: 'chhart-mcp-server',
-            version: '1.0.1',
+            version: '1.0.2',
         },
         {
             capabilities: {
