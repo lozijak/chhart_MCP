@@ -1,9 +1,9 @@
 # Chhart MCP Server
 
-[![npm version](https://img.shields.io/npm/v/chhart-mcp-server.svg)](https://www.npmjs.com/package/chhart-mcp-server)
+[![npm version](https://img.shields.io/npm/v/chhart-mcp.svg)](https://www.npmjs.com/package/chhart-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](https://nodejs.org/)
-[![MCP Badge](https://lobehub.com/badge/mcp/chhart-chhart-mcp-server)](https://lobehub.com/mcp/chhart-chhart-mcp-server)
+[![MCP Badge](https://lobehub.com/badge/mcp/chhart-mcp)](https://lobehub.com/mcp/chhart-mcp)
 
 An MCP (Model Context Protocol) server that enables AI assistants like ChatGPT, Claude, and others to programmatically create flowcharts and Sankey diagrams on [chhart.app](https://chhart.app).
 
@@ -45,18 +45,24 @@ An MCP (Model Context Protocol) server that enables AI assistants like ChatGPT, 
 
 ## Installation
 
-### From npm (Coming Soon)
+### From npm
 
 ```bash
-npm install -g chhart-mcp-server
+npm install -g chhart-mcp
+```
+
+Or run directly without installing:
+
+```bash
+npx chhart-mcp
 ```
 
 ### From Source
 
 ```bash
 # Clone the repository
-git clone https://github.com/chhart/chhart-mcp-server.git
-cd chhart-mcp-server
+git clone https://github.com/chhart/chhart-mcp.git
+cd chhart-mcp
 
 # Install dependencies
 npm install
@@ -99,8 +105,8 @@ For use with Claude Desktop, Cursor, or other local MCP clients:
    {
      "mcpServers": {
        "chhart": {
-         "command": "node",
-         "args": ["/absolute/path/to/chhart_MCP/dist/index.js"]
+         "command": "npx",
+         "args": ["-y", "chhart-mcp"]
        }
      }
    }

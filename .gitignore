@@ -64,7 +64,6 @@ payload.json
 test_encoding.ts
 
 # Package manager
-package-lock.json
 yarn.lock
 pnpm-lock.yaml
 .pnpm-store/

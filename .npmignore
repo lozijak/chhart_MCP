@@ -1,0 +1,23 @@
+# Source code (we only publish compiled dist/)
+src/
+tsconfig.json
+
+# Development files
+.github/
+docs/
+*.md
+!README.md
+!LICENSE
+!CHANGELOG.md
+
+# Server-specific files (not needed for stdio installation)
+railway.json
+Dockerfile
+SECURITY.md
+CONTRIBUTING.md
+
+# Standard ignores
+node_modules/
+.git/
+.env*
+*.log
